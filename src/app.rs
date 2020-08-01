@@ -1,14 +1,12 @@
 use crate::{
     command_pallete::CommandPalleteDialog,
-    executor::{self, Executor},
-    gtk::ButtonExt,
+    gtk::ButtonExt, script::{TextReplacement, Script},
 };
 use gdk_pixbuf::{prelude::*, PixbufLoader};
 use gladis::Gladis;
 use gtk::prelude::*;
 use sourceview::prelude::*;
 
-use executor::TextReplacement;
 use gtk::{AboutDialog, ApplicationWindow, Button, ModelButton, Statusbar};
 use std::{cell::RefCell, path::Path, rc::Rc};
 
@@ -37,11 +35,11 @@ pub struct App {
     widgets: AppWidgets,
 
     context_id: u32,
-    scripts: Rc<RefCell<Vec<Executor>>>,
+    scripts: Rc<RefCell<Vec<Script>>>,
 }
 
 impl App {
-    pub fn new(config_dir: &Path, scripts: Rc<RefCell<Vec<Executor>>>) -> Self {
+    pub fn new(config_dir: &Path, scripts: Rc<RefCell<Vec<Script>>>) -> Self {
         let mut app = App {
             widgets: AppWidgets::from_string(include_str!("../ui/boop-gtk.glade")),
             context_id: 0,
@@ -150,7 +148,6 @@ impl App {
             info!(
                 "executing {}",
                 self.scripts.borrow()[script_id as usize]
-                    .script()
                     .metadata()
                     .name
             );

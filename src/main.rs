@@ -26,31 +26,24 @@ extern crate simple_error;
 #[macro_use]
 extern crate log;
 
-mod executor;
-mod script;
-use script::Script;
 mod app;
 mod command_pallete;
+mod script;
 
-use rusty_v8 as v8;
-
+use app::App;
+use directories::ProjectDirs;
+use fmt::Display;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Application;
-
 use rust_embed::RustEmbed;
+use rusty_v8 as v8;
+use script::Script;
 use std::{
     borrow::Cow,
     fmt,
     path::{Path, PathBuf},
 };
-
-use sublime_fuzzy::ScoreConfig;
-
-use app::App;
-use directories::ProjectDirs;
-use executor::Executor;
-use fmt::Display;
 use std::{
     cell::RefCell,
     error::Error,
@@ -58,6 +51,7 @@ use std::{
     io::prelude::*,
     rc::Rc,
 };
+use sublime_fuzzy::ScoreConfig;
 
 lazy_static! {
     static ref PROJECT_DIRS: directories::ProjectDirs =
@@ -268,10 +262,7 @@ fn main() {
         script.id = i as u32;
     }
 
-    // TODO(mrbenshef): merge executor and script
-    let scripts: Rc<RefCell<Vec<Executor>>> = Rc::new(RefCell::new(
-        scripts.into_iter().map(Executor::new).collect(),
-    ));
+    let scripts: Rc<RefCell<Vec<Script>>> = Rc::new(RefCell::new(scripts));
 
     // needed on windows
     sourceview::View::static_type();
